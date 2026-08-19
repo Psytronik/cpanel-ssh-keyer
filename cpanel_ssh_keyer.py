@@ -231,10 +231,17 @@ def main() -> int:
             continue
         imp_res = imp.get("cpanelresult", imp)
         if imp_res.get("error"):
-            results.append((domain, False, f"import: {redact(str(imp_res['error'])[:150])}"))
-            print(f"   ❌ import: {redact(str(imp_res['error'])[:150])}")
-            time.sleep(args.sleep)
-            continue
+            err_msg = str(imp_res["error"])
+            # Key already imported in a previous run → NOT a failure; skip to
+            # authorize (live 2026-08-19: re-runs on 14 accounts hit this and
+            # the tool wrongly reported them as FAILED before authorizing).
+            if "already exists" in err_msg.lower():
+                print(f"   ↪ key already present — skipping to authorize")
+            else:
+                results.append((domain, False, f"import: {redact(err_msg[:150])}"))
+                print(f"   ❌ import: {redact(err_msg[:150])}")
+                time.sleep(args.sleep)
+                continue
         # the stored key name may differ from the requested one (live 2026-08-19:
         # requested 'lion_wildfarm' but cPanel returned 'id_dsa.pub')
         stored_name = None
