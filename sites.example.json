@@ -1,0 +1,9 @@
+[
+  {
+    "host": "rs19.cphost.co.za",
+    "domain": "example.com",
+    "user": "cpanel_username",
+    "token": "YOUR-32-CHAR-CPANEL-API-TOKEN",
+    "port": 2083
+  }
+]
